@@ -15,7 +15,7 @@ class DataAccess(ABC):
         raise NotImplementedError
 
 
-class InMemoryDb(DataAccess):
+class InMemoryBottleFeedingDb(DataAccess):
     def __init__(self):
         self.data: List[BottleFeeding] = []
 
