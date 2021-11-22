@@ -1,9 +1,15 @@
+from datetime import datetime
+
+
 class BottleFeeding:
-    def __init__(self, time, milk_remained, total_water, total_spoons):
+    def __init__(self, time: datetime, milk_remained, total_water, total_spoons):
         self.time = time
         self.milk_remained = milk_remained
         self.total_water = total_water
         self.total_spoons = total_spoons
+
+    def get_date(self):
+        return datetime(self.time.year, self.time.month, self.time.day)
 
     def __eq__(self, other):
         return self.time == other.time \
