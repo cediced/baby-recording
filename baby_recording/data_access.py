@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List
 
-from baby_recording.records import BottleFeeding
+from baby_recording.bottle_feeding import BottleFeeding
 
 
 class DataAccess(ABC):

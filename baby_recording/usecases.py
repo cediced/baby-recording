@@ -1,5 +1,5 @@
 from baby_recording.data_access import DataAccess
-from baby_recording.records import BottleFeeding
+from baby_recording.bottle_feeding import BottleFeeding
 
 
 class SaveBottleFeeding:

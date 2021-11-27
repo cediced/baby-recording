@@ -4,8 +4,9 @@ from typing import List
 
 import pytest
 
-from baby_recording import records, data_access, usecases
-from baby_recording.records import BottleFeeding, RemainingMilkHigherThanTotalError, QuantityDrunkChecker
+from baby_recording import bottle_feeding, data_access, usecases
+from baby_recording.bottle_feeding import BottleFeeding, RemainingMilkHigherThanTotalError, QuantityDrunkChecker, \
+    NextFeedingTime
 
 
 @dataclass
@@ -44,23 +45,23 @@ def fixture_sample_bottle_feedings():
     same_day = []
     others = []
     same_day.append(
-        records.BottleFeeding(time=datetime(year=2021, month=12, day=21, hour=8, minute=30),
-                              total_milk=135,
-                              remaining_milk=10))
+        bottle_feeding.BottleFeeding(time=datetime(year=2021, month=12, day=21, hour=8, minute=30),
+                                     total_milk=135,
+                                     remaining_milk=10))
     same_day.append(
-        records.BottleFeeding(time=datetime(year=2021, month=12, day=21, hour=11, minute=30),
-                              total_milk=135,
-                              remaining_milk=10))
+        bottle_feeding.BottleFeeding(time=datetime(year=2021, month=12, day=21, hour=11, minute=30),
+                                     total_milk=135,
+                                     remaining_milk=10))
 
     others.append(
-        records.BottleFeeding(time=datetime(year=2021, month=12, day=20, hour=8, minute=30),
-                              total_milk=135,
-                              remaining_milk=10)
+        bottle_feeding.BottleFeeding(time=datetime(year=2021, month=12, day=20, hour=8, minute=30),
+                                     total_milk=135,
+                                     remaining_milk=10)
     )
     others.append(
-        records.BottleFeeding(time=datetime(year=2021, month=12, day=20, hour=11, minute=30),
-                              total_milk=135,
-                              remaining_milk=10))
+        bottle_feeding.BottleFeeding(time=datetime(year=2021, month=12, day=20, hour=11, minute=30),
+                                     total_milk=135,
+                                     remaining_milk=10))
     return SampleBottleFeedings(same_day=same_day, others=others)
 
 
@@ -108,6 +109,24 @@ def test_the_remaining_quantity_of_milk(sample_bottle_feedings):
     assert checker.remaining_quantity() == 50  # max 300 - drunk 250
     assert checker.minimum_reached()
     assert not checker.maximum_reached()
+
+
+def test_next_feeding_time_not_reached(sample_bottle_feedings):
+    nft = NextFeedingTime(minimum_hours=3, maximum_hours=4,
+                          last_feeding_time=datetime(year=2021, month=12, day=21, hour=8, minute=30))
+    time_now = datetime(year=2021, month=12, day=21, hour=8, minute=30)
+    assert not nft.is_allowed(time_now=time_now)
+
+
+def test_next_feeding_time_reached(sample_bottle_feedings):
+    hour = 8
+    minimum_time = 3
+    nft = NextFeedingTime(minimum_hours=3, maximum_hours=4,
+                          last_feeding_time=datetime(year=2021, month=12, day=21, hour=hour, minute=00))
+    time_now = datetime(year=2021, month=12, day=21, hour=hour + minimum_time + 1, minute=30)
+    assert nft.diff_in_hours(time_now=time_now) == 4.5
+    assert nft.is_allowed(time_now=time_now)
+    assert nft.is_max_over(time_now=time_now)
 
 # save different feedings for different days and read one day, only the feedings for that day should come
 # test if wrong type for save feeding

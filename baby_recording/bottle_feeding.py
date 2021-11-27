@@ -34,9 +34,13 @@ class RemainingMilkHigherThanTotalError(Exception):
     pass
 
 
+def assert_max_higher_than_min(min, max):
+    assert min < max, f"minimum {min} is higher than maximum allowed {max}"
+
+
 class QuantityDrunkChecker:
     def __init__(self, minimum_quantity, maximum_quantity, feedings: List[BottleFeeding]):
-        assert minimum_quantity < maximum_quantity, f"minimum milk {minimum_quantity} is higher than maximum allowed {maximum_quantity}"
+        assert_max_higher_than_min(minimum_quantity, maximum_quantity)
         self.minimum_quantity = minimum_quantity
         self.maximum_quantity = maximum_quantity
         self.feedings = feedings
@@ -52,3 +56,23 @@ class QuantityDrunkChecker:
 
     def maximum_reached(self):
         return self.calculate_quantity_drunk() > self.maximum_quantity
+
+
+class NextFeedingTime:
+    def __init__(self, minimum_hours: int, maximum_hours: int, last_feeding_time: datetime):
+        assert_max_higher_than_min(minimum_hours, maximum_hours)
+        self.minimum_hours = minimum_hours
+        self.maximum_hours = maximum_hours
+        self.last_feeding_time = last_feeding_time
+
+    def diff_in_hours(self, time_now):
+        diff = time_now - self.last_feeding_time
+        in_seconds = diff.total_seconds()
+        in_hours = in_seconds / 3600
+        return in_hours
+
+    def is_allowed(self, time_now: datetime):
+        return self.diff_in_hours(time_now) > self.minimum_hours
+
+    def is_max_over(self, time_now):
+        return self.diff_in_hours(time_now) > self.maximum_hours
