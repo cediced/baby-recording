@@ -58,6 +58,7 @@ def test_next_time_action_needs_t_be_performed():
     assert nft.from_time == datetime(year=2021, month=12, day=22, hour=1, minute=00)
     assert nft.to_time == datetime(year=2021, month=12, day=22, hour=2, minute=00)
 
+
 # save different feedings for different days and read one day, only the feedings for that day should come
 # test if wrong type for save feeding
 def get_quantity_checker(feedings: List[BottleFeeding]):

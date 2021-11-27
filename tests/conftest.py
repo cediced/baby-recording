@@ -19,6 +19,9 @@ class SampleBottleFeedings:
         together.extend(self.others)
         return together
 
+    def get_time(self):
+        return self.same_day[0].time
+
     def get_total_milk_drunk_same_day(self):
         return sum([feeding.get_total_milk_drunk() for feeding in self.same_day])
 
