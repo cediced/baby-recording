@@ -1,0 +1,22 @@
+@startuml
+
+class FeedingBottle {
+time
+how_much_left
+water_quantity
+how_many_spoons
+type_milk
+get_total_milk()
+}
+
+class BottleFeedingProcess {
+today_feedings
+max_milk_a_day_in_ml
+min_milk_a_day_in_ml
+calculate_quantity_drunk_today()
+calculate_remaining_milk_to_drink()
+get_time_since_last_feeding()
+is_quantity_drunk_ok()
+}
+
+@enduml

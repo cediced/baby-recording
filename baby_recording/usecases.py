@@ -8,4 +8,4 @@ class SaveBottleFeeding:
         self.bottle_feeding = bottle_feeding
 
     def execute(self):
-        self.data_access.save_feedings(self.bottle_feeding)
+        self.data_access.save(self.bottle_feeding)

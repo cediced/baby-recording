@@ -7,21 +7,21 @@ from baby_recording.records import BottleFeeding
 
 class DataAccess(ABC):
     @abstractmethod
-    def read_feedings(self, day: datetime):
+    def read(self, day: datetime):
         raise NotImplementedError
 
     @abstractmethod
-    def save_feedings(self, feeding: BottleFeeding):
+    def save(self, feeding: BottleFeeding):
         raise NotImplementedError
 
 
 class InMemoryBottleFeedingDb(DataAccess):
     def __init__(self):
-        self.data: List[BottleFeeding] = []
+        self.records: List[BottleFeeding] = []
 
-    def read_feedings(self, day: datetime):
-        return [feeding for feeding in self.data if
-                feeding.get_date() == day]
+    def read(self, day: datetime):
+        return [record for record in self.records if
+                record.get_date() == day]
 
-    def save_feedings(self, feeding: BottleFeeding):
-        self.data.append(feeding)
+    def save(self, feeding: BottleFeeding):
+        self.records.append(feeding)
