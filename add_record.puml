@@ -10,7 +10,7 @@ get_total_milk()
 }
 
 class BottleFeedingProcess {
-today_feedings
+feedings
 max_milk_a_day_in_ml
 min_milk_a_day_in_ml
 calculate_quantity_drunk_today()
