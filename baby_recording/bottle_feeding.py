@@ -1,5 +1,5 @@
 from abc import ABC
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List
 
 
@@ -58,15 +58,17 @@ class QuantityDrunkChecker:
         return self.calculate_quantity_drunk() > self.maximum_quantity
 
 
-class NextFeedingTime:
-    def __init__(self, minimum_hours: int, maximum_hours: int, last_feeding_time: datetime):
+class NextTime:
+    def __init__(self, minimum_hours: int, maximum_hours: int, last_time: datetime):
         assert_max_higher_than_min(minimum_hours, maximum_hours)
         self.minimum_hours = minimum_hours
         self.maximum_hours = maximum_hours
-        self.last_feeding_time = last_feeding_time
+        self.last_time = last_time
+        self.from_time = None
+        self.to_time = None
 
     def diff_in_hours(self, time_now):
-        diff = time_now - self.last_feeding_time
+        diff = time_now - self.last_time
         in_seconds = diff.total_seconds()
         in_hours = in_seconds / 3600
         return in_hours
@@ -76,3 +78,7 @@ class NextFeedingTime:
 
     def is_max_over(self, time_now):
         return self.diff_in_hours(time_now) > self.maximum_hours
+
+    def calculate(self):
+        self.from_time = self.last_time + timedelta(hours=self.minimum_hours)
+        self.to_time = self.last_time + timedelta(hours=self.maximum_hours)

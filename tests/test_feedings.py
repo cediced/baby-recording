@@ -6,7 +6,7 @@ import pytest
 
 from baby_recording import bottle_feeding, data_access, usecases
 from baby_recording.bottle_feeding import BottleFeeding, RemainingMilkHigherThanTotalError, QuantityDrunkChecker, \
-    NextFeedingTime
+    NextTime
 
 
 @dataclass
@@ -112,8 +112,8 @@ def test_the_remaining_quantity_of_milk(sample_bottle_feedings):
 
 
 def test_next_feeding_time_not_reached(sample_bottle_feedings):
-    nft = NextFeedingTime(minimum_hours=3, maximum_hours=4,
-                          last_feeding_time=datetime(year=2021, month=12, day=21, hour=8, minute=30))
+    nft = NextTime(minimum_hours=3, maximum_hours=4,
+                   last_time=datetime(year=2021, month=12, day=21, hour=8, minute=30))
     time_now = datetime(year=2021, month=12, day=21, hour=8, minute=30)
     assert not nft.is_allowed(time_now=time_now)
 
@@ -121,12 +121,22 @@ def test_next_feeding_time_not_reached(sample_bottle_feedings):
 def test_next_feeding_time_reached(sample_bottle_feedings):
     hour = 8
     minimum_time = 3
-    nft = NextFeedingTime(minimum_hours=3, maximum_hours=4,
-                          last_feeding_time=datetime(year=2021, month=12, day=21, hour=hour, minute=00))
+    nft = NextTime(minimum_hours=3, maximum_hours=4,
+                   last_time=datetime(year=2021, month=12, day=21, hour=hour, minute=00))
     time_now = datetime(year=2021, month=12, day=21, hour=hour + minimum_time + 1, minute=30)
     assert nft.diff_in_hours(time_now=time_now) == 4.5
     assert nft.is_allowed(time_now=time_now)
     assert nft.is_max_over(time_now=time_now)
+
+
+def test_next_time_action_needs_t_be_performed():
+    hour = 22
+    minimum_time = 3
+    nft = NextTime(minimum_hours=3, maximum_hours=4,
+                   last_time=datetime(year=2021, month=12, day=21, hour=hour, minute=00))
+    nft.calculate()
+    assert nft.from_time == datetime(year=2021, month=12, day=22, hour=1, minute=00)
+    assert nft.to_time == datetime(year=2021, month=12, day=22, hour=2, minute=00)
 
 # save different feedings for different days and read one day, only the feedings for that day should come
 # test if wrong type for save feeding
